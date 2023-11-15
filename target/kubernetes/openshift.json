@@ -1,0 +1,165 @@
+[{
+  "apiVersion" : "v1",
+  "kind" : "Service",
+  "metadata" : {
+    "annotations" : {
+      "app.openshift.io/vcs-url" : "<<unknown>>",
+      "app.quarkus.io/commit-id" : "a3e924f5a39e449e58fd4cb93b412648d580e517",
+      "app.quarkus.io/build-timestamp" : "2023-11-15 - 20:07:17 +0000"
+    },
+    "labels" : {
+      "app.kubernetes.io/name" : "csc8104",
+      "app.kubernetes.io/version" : "1.0.0-SNAPSHOT",
+      "app.openshift.io/runtime" : "quarkus"
+    },
+    "name" : "csc8104"
+  },
+  "spec" : {
+    "ports" : [ {
+      "name" : "http",
+      "port" : 80,
+      "targetPort" : 8080
+    } ],
+    "selector" : {
+      "app.kubernetes.io/name" : "csc8104",
+      "app.kubernetes.io/version" : "1.0.0-SNAPSHOT"
+    },
+    "type" : "ClusterIP"
+  }
+},{
+  "apiVersion" : "image.openshift.io/v1",
+  "kind" : "ImageStream",
+  "metadata" : {
+    "annotations" : {
+      "app.openshift.io/vcs-url" : "<<unknown>>",
+      "app.quarkus.io/commit-id" : "a3e924f5a39e449e58fd4cb93b412648d580e517",
+      "app.quarkus.io/build-timestamp" : "2023-11-15 - 20:07:17 +0000"
+    },
+    "labels" : {
+      "app.kubernetes.io/name" : "csc8104",
+      "app.kubernetes.io/version" : "1.0.0-SNAPSHOT",
+      "app.openshift.io/runtime" : "quarkus"
+    },
+    "name" : "csc8104"
+  },
+  "spec" : { }
+},{
+  "apiVersion" : "image.openshift.io/v1",
+  "kind" : "ImageStream",
+  "metadata" : {
+    "labels" : {
+      "app.kubernetes.io/name" : "csc8104",
+      "app.kubernetes.io/version" : "1.0.0-SNAPSHOT"
+    },
+    "name" : "s2i-java"
+  },
+  "spec" : {
+    "dockerImageRepository" : "fabric8/s2i-java"
+  }
+},{
+  "apiVersion" : "build.openshift.io/v1",
+  "kind" : "BuildConfig",
+  "metadata" : {
+    "annotations" : {
+      "app.openshift.io/vcs-url" : "<<unknown>>",
+      "app.quarkus.io/commit-id" : "a3e924f5a39e449e58fd4cb93b412648d580e517",
+      "app.quarkus.io/build-timestamp" : "2023-11-15 - 20:07:17 +0000"
+    },
+    "labels" : {
+      "app.kubernetes.io/name" : "csc8104",
+      "app.kubernetes.io/version" : "1.0.0-SNAPSHOT",
+      "app.openshift.io/runtime" : "quarkus"
+    },
+    "name" : "csc8104"
+  },
+  "spec" : {
+    "output" : {
+      "to" : {
+        "kind" : "ImageStreamTag",
+        "name" : "csc8104:1.0.0-SNAPSHOT"
+      }
+    },
+    "source" : {
+      "binary" : { }
+    },
+    "strategy" : {
+      "sourceStrategy" : {
+        "from" : {
+          "kind" : "ImageStreamTag",
+          "name" : "s2i-java:2.3"
+        }
+      }
+    }
+  }
+},{
+  "apiVersion" : "apps.openshift.io/v1",
+  "kind" : "DeploymentConfig",
+  "metadata" : {
+    "annotations" : {
+      "app.openshift.io/vcs-url" : "<<unknown>>",
+      "app.quarkus.io/commit-id" : "a3e924f5a39e449e58fd4cb93b412648d580e517",
+      "app.quarkus.io/build-timestamp" : "2023-11-15 - 20:07:17 +0000"
+    },
+    "labels" : {
+      "app.kubernetes.io/name" : "csc8104",
+      "app.kubernetes.io/version" : "1.0.0-SNAPSHOT",
+      "app.openshift.io/runtime" : "quarkus"
+    },
+    "name" : "csc8104"
+  },
+  "spec" : {
+    "replicas" : 1,
+    "selector" : {
+      "app.kubernetes.io/name" : "csc8104",
+      "app.kubernetes.io/version" : "1.0.0-SNAPSHOT"
+    },
+    "template" : {
+      "metadata" : {
+        "annotations" : {
+          "app.openshift.io/vcs-url" : "<<unknown>>",
+          "app.quarkus.io/commit-id" : "a3e924f5a39e449e58fd4cb93b412648d580e517",
+          "app.quarkus.io/build-timestamp" : "2023-11-15 - 20:07:17 +0000"
+        },
+        "labels" : {
+          "app.kubernetes.io/name" : "csc8104",
+          "app.kubernetes.io/version" : "1.0.0-SNAPSHOT",
+          "app.openshift.io/runtime" : "quarkus"
+        }
+      },
+      "spec" : {
+        "containers" : [ {
+          "env" : [ {
+            "name" : "KUBERNETES_NAMESPACE",
+            "valueFrom" : {
+              "fieldRef" : {
+                "fieldPath" : "metadata.namespace"
+              }
+            }
+          }, {
+            "name" : "JAVA_APP_JAR",
+            "value" : "/deployments/csc8104-1.0.0-SNAPSHOT-runner.jar"
+          } ],
+          "image" : "admin/csc8104:1.0.0-SNAPSHOT",
+          "imagePullPolicy" : "Always",
+          "name" : "csc8104",
+          "ports" : [ {
+            "containerPort" : 8080,
+            "name" : "http",
+            "protocol" : "TCP"
+          } ]
+        } ]
+      }
+    },
+    "triggers" : [ {
+      "imageChangeParams" : {
+        "automatic" : true,
+        "containerNames" : [ "csc8104" ],
+        "from" : {
+          "kind" : "ImageStreamTag",
+          "name" : "csc8104:1.0.0-SNAPSHOT"
+        }
+      },
+      "type" : "ImageChange"
+    } ]
+  }
+}]
